@@ -8,7 +8,7 @@
 # Copyright:   (c) orhan 2021
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
-from resources.lib.logger import logger 
+
 import re  ,sys
 import hashlib
 import binascii
