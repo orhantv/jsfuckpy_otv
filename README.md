@@ -1,5 +1,5 @@
 # OTVJSfuckdec.py jsfuck decoder Works in python 2 and 3
- new ..decode html
+ new ..decoded html
 https://www.sawlive.tv/embed/hunganit
 
 
