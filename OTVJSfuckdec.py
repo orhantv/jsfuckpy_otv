@@ -1,182 +1,126 @@
-#!/usr/bin/env python
-
+#-*- coding: utf-8 -*-
+# Name:        otv-jsfuckdecoder
+# Purpose:
+# Version:     2.0
+# Author:      orhan
+#
+# Created:     05.03.2022
+# Copyright:   (c) orhan 2021
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
 import sys
 import re
-try:
-    # Python 2
-    xrange
-except NameError:
-    # Python 3, xrange is now named range
-    xrange = range
-
 from future.utils import iteritems     
-try:
-    import ssl
-    import socket
-    timeout = 30
-    socket.setdefaulttimeout(timeout)
-    try:
-        _create_unverified_https_context = ssl._create_unverified_context
-    except AttributeError:
-        pass
-    else:
-        ssl._create_default_https_context = _create_unverified_https_context
-except ImportError:
-    pass
-try:
-    import json
-    import math
-    import httplib
-except:
-    pass
-try:
-    import http.cookiejar as cookielib
-    from urllib.parse import urlencode as Urlencode
-    from urllib.parse import unquote_plus as Unquote_plus
-    from urllib.parse import unquote as Unquote
-    from urllib.parse import quote 
-    from urllib.parse import urlparse 
-    from urllib.parse import urljoin 
-    from urllib.parse import parse_qsl 
-    from urllib.parse import parse_qs 
-    from html.parser import HTMLParser
-    from urllib.request import Request
-    from urllib.request import urlopen
-    from urllib.request import HTTPCookieProcessor
-    from urllib.request import build_opener
-    from urllib.request import HTTPBasicAuthHandler
-    from urllib.request import HTTPHandler
-    from urllib.request import install_opener
-    PY3 = True; unicode = str; unichr = chr; long = int
-except:
-    import cookielib
-    from HTMLParser import HTMLParser
-    from urllib import urlencode as Urlencode
-    from urllib import unquote_plus as Unquote_plus
-    from urllib import unquote as Unquote
-    from urllib import quote 
-    from urlparse import urlparse 
-    from urlparse import urljoin 
-    from urlparse import parse_qsl 
-    from urlparse import parse_qs 
-    from urllib2 import Request    
-    from urllib2 import urlopen
-    from urllib2 import HTTPCookieProcessor
-    from urllib2 import build_opener
-    from urllib2 import HTTPBasicAuthHandler
-    from urllib2 import HTTPHandler
-    from urllib2 import install_opener  
-
        
 class OTVJSfuck(object):
- USE_CHAR_CODE = "USE_CHAR_CODE"
+ KARAKTER_KODUNU_KULLAN = "KARAKTER_KODUNU_KULLAN"
  SIMPLE = {
         'Infinity':   '+(+!+[]+(!+[]+[])[!+[]+!+[]+!+[]]+[+!+[]]+[+[]]+[+[]]+[+[]])',
-        'true':       '!![]',      
-        'undefined':  '[][[]]',
+        'dogru':       '!![]',      
+        'tanimsiz':  '[][[]]',
         'NaN':        '+[![]]',
-         'Number':   '(+[])',
-        'String':   '([]+[])',  
-        'Array':   '([][])',                                         
-        'Boolean':  '(![])',
-        'Function': '[][fill]',     
-        'false':      '![]',  
+         'Numara':   '(+[])',
+        'Sicim':   '([]+[])',  
+        'Dizi':   '([][])',                                         
+        'Boole':  '(![])',
+        'islev': '[][fill]',     
+        'yanlis':      '![]',  
     }
-
+                 
 
  LMAPPING = {                 
-        'a':   '(false[])[1]',
+        'a':   '(yanlis[])[1]',
         'b':   '([][entries]()[])[2]',
-        'd':   '(undefined[])[2]',
-        'e':   '(true[])[3]',
-        'f':   '(false[])[0]',
-        'g':   '(false[0]String)[20]',
-        'h':   '((101))[toString[name]](21)[1]',      
-        'i':   '([false]undefined)[10]',              
+        'd':   '(tanimsiz[])[2]',
+        'e':   '(dogru[])[3]',
+        'f':   '(yanlis[])[0]',
+        'g':   '(yanlis[0]Sicim)[20]',
+        'h':   '((101))[toSicim[name]](21)[1]',      
+        'i':   '([yanlis]tanimsiz)[10]',              
         'j':   '([][entries]()[])[3]',
-        'k':   '((20))[toString[name]](21)',
-        'l':   '(false[])[2]',
-        'n':   '(undefined[])[1]',
-        'o':   '(true[][fill])[10]',  
-        'p':   '((2[1][1]))[toString[name]](31)[1]',
-        'p':   '((211))[toString[name]](31)[1]',      
-        'q':   '((212))[toString[name]](31)[1]',              
-        'r':   '(true[])[1]',                   
-        's':   '(false[])[3]',
-        't':   '(true[])[0]',                                   
-        'u':   '(undefined[])[0]',
-        'v':   '((31))[toString[name]](32)',
-        'w':   '((32))[toString[name]](33)',
-        'x':   '((101))[toString[name]](34)[1]', 
+        'k':   '((20))[toSicim[name]](21)',
+        'l':   '(yanlis[])[2]',
+        'n':   '(tanimsiz[])[1]',
+        'o':   '(dogru[][fill])[10]',  
+        'p':   '((2[1][1]))[toSicim[name]](31)[1]',
+        'p':   '((211))[toSicim[name]](31)[1]',      
+        'q':   '((212))[toSicim[name]](31)[1]',              
+        'r':   '(dogru[])[1]',                   
+        's':   '(yanlis[])[3]',
+        't':   '(dogru[])[0]',                                   
+        'u':   '(tanimsiz[])[0]',
+        'v':   '((31))[toSicim[name]](32)',
+        'w':   '((32))[toSicim[name]](33)',
+        'x':   '((101))[toSicim[name]](34)[1]', 
         'y':   '(NaN[Infinity])[10]',
-        'z':   '((35))[toString[name]](36)',    
-        'A':   '([][])[10]',     #([]Array)[10]
-        'B':   '([]Boolean)[10]',
-        'C':   '[][fill](return escape)()(String[italics]())[2]',                      
+        'z':   '((35))[toSicim[name]](36)',    
+        'A':   '([][])[10]',     #([]Dizi)[10]
+        'B':   '([]Boole)[10]',
+        'C':   '[][fill](return escape)()(Sicim[italics]())[2]',                      
         'D':     '[][fill](return escape)()([][fill])[slice](-1)',
         'F':   '([][][fill])[10]',
-        'G':   '(false[][fill](return Date)()())[30]',
-        'H':   USE_CHAR_CODE,
+        'G':   '(yanlis[][fill](return Date)()())[30]',
+        'H':   KARAKTER_KODUNU_KULLAN,
         'I':   '(Infinity[])[0]',
-        'J':   USE_CHAR_CODE,
-        'K':   USE_CHAR_CODE,
-        'L':   USE_CHAR_CODE,
-        'M':   '(true[][fill](return Date)()())[30]',         
+        'J':   KARAKTER_KODUNU_KULLAN,
+        'K':   KARAKTER_KODUNU_KULLAN,
+        'L':   KARAKTER_KODUNU_KULLAN,
+        'M':   '(dogru[][fill](return Date)()())[30]',         
         'N':   '(NaN[])[0]',
-        'P':   USE_CHAR_CODE,                    
-        'Q':   USE_CHAR_CODE,                 
-        'S':   '([]String)[10]',
+        'P':   KARAKTER_KODUNU_KULLAN,                    
+        'Q':   KARAKTER_KODUNU_KULLAN,                 
+        'S':   '([]Sicim)[10]',
         'T':   '(NaN[][fill](return Date)()())[30]',               
-        'V':   USE_CHAR_CODE,
-        'W':   USE_CHAR_CODE,
-        'X':   USE_CHAR_CODE,
-        'Y':   USE_CHAR_CODE,
-        'Z':   USE_CHAR_CODE,            
-        '.':   '((11(true[])320)[])1',                
+        'V':   KARAKTER_KODUNU_KULLAN,
+        'W':   KARAKTER_KODUNU_KULLAN,
+        'X':   KARAKTER_KODUNU_KULLAN,
+        'Y':   KARAKTER_KODUNU_KULLAN,
+        'Z':   KARAKTER_KODUNU_KULLAN,            
+        '.':   '((11e20)[])[1]',                
         ' ':   '(NaN[][fill])[11]',            
-        '!':   USE_CHAR_CODE,                       
-        '"':   'String[fontcolor]()[12]',
-        '#':   USE_CHAR_CODE,                  
-        '$':   USE_CHAR_CODE,
+        '!':   KARAKTER_KODUNU_KULLAN,                       
+        '"':   'Sicim[fontcolor]()[12]',
+        '#':   KARAKTER_KODUNU_KULLAN,                  
+        '$':   KARAKTER_KODUNU_KULLAN,
         '%':   '[][fill](return escape)()([][fill])[21]',     
-        '\'':  USE_CHAR_CODE,
-        '(':   '(undefined[][[fill[])[22]',
-        ')':   '([0]false[][[fill[])[20]',
-        '*':   USE_CHAR_CODE,                                 
+        '\'':  KARAKTER_KODUNU_KULLAN,
+        '(':   '(tanimsiz[][[fill[])[22]',
+        ')':   '([0]yanlis[][[fill[])[20]',
+        '*':   KARAKTER_KODUNU_KULLAN,                                 
         '':   ('((![](![][])[![]![]![]]'
                 '[![]][[]][[]])[])[2]'),
-        ',':   '([][[slice[][[call[](false[])[])[1]',
+        ',':   '([][[slice[][[call[](yanlis[])[])[1]',
         '-':   '((.[[]000000001])[])[2]',
-         '/':   '(false[0])[italics]()[10]',                   
-        ':':   '([][fill](return/false/)()()[])[3]',
+         '/':   '(yanlis[0])[italics]()[10]',                   
+        ':':   '([][fill](return/yanlis/)()()[])[3]',
         ';':   '([])[[link[]([)[14]',                               
         '<':   '([])[[italics[]()[0]',
-        '=':   'String[fontcolor]()[11]',
+        '=':   'Sicim[fontcolor]()[11]',
         '>':   '([])[[italics[]()[2]',
-        '?':   '([][fill](return/false/)()()[])[2]',
-        '@':   USE_CHAR_CODE,                           
+        '?':   '([][fill](return/yanlis/)()()[])[2]',
+        '@':   KARAKTER_KODUNU_KULLAN,                           
         '[':   '([][[entries[]()[])[0]',
-        '\\':  USE_CHAR_CODE,
+        '\\':  KARAKTER_KODUNU_KULLAN,
         ']':   '([][[entries[]()[])[22]',
-        '^':   USE_CHAR_CODE,                                     
-        '_':   USE_CHAR_CODE,
-        '`':   USE_CHAR_CODE,
-        '{':   '(true[][fill])[20]',             
-        '|':   USE_CHAR_CODE,
+        '^':   KARAKTER_KODUNU_KULLAN,                                     
+        '_':   KARAKTER_KODUNU_KULLAN,
+        '`':   KARAKTER_KODUNU_KULLAN,
+        '{':   '(dogru[][fill])[20]',             
+        '|':   KARAKTER_KODUNU_KULLAN,                                        
         '}':   '([][fill][])[slice](-1)',  
         'c':   '([][fill][])[3]',          
-        'm':   '(Number[])[11]',                            
-        '':   '(([][fill(return/false/)()(/)[])[1])',             
+        'm':   '(Numara[])[11]',                            
+        '':   '(([][fill(return/yanlis/)()(/)[])[1])',             
         'orhantv':   ')[split(t)[join]")()',
         'orhantv':   '[][fill(return"(',
         'orhantv':   ')split(t)join")()',
-        'E':   '([][fill](return/false/)()[])[12]', #(RegExp[])[12]  
-        'U':   '(NaN[][fill](return{})()[toString[name]][call]())[11]',
-        'R':   '([][][fill](return/false/)())[10]',              
+        'E':   '([][fill](return/yanlis/)()[])[12]', #(RegExp[])[12]  
+        'U':   '(NaN[][fill](return{})()[toSicim[name]][call]())[11]',
+        'R':   '([][][fill](return/yanlis/)())[10]',              
         'O':   '(NaN[][fill](return{})())[11]',   
-        '&':   'String[link](0")[10]',           
+        '&':   'Sicim[link](0")[10]',           
         'orhantv':   '[][fill](return unescape)()',                                    
-        '~':   USE_CHAR_CODE           
+        '~':   KARAKTER_KODUNU_KULLAN           
     }
  def __init__(self, js):
         self.js = js
@@ -202,7 +146,7 @@ class OTVJSfuck(object):
               js =  js.replace('t123','S')  
               js =  js.replace('t124','T')  
               js =  js.replace('t125','U')  
-              js =  js.replace('t334','Ü')
+              js =  js.replace('t334','Ãœ')
               js =  js.replace('t126','V')  
               js =  js.replace('t127','W')  
               js =  js.replace('t130','X')  
@@ -247,17 +191,17 @@ class OTVJSfuck(object):
               js =  js.replace('t46','&')                
               js =  js.replace('t45','%')  
               js =  js.replace('t44','$')  
-              js =  js.replace('t247','�') 
+              js =  js.replace('t247','ï¿½') 
               js =  js.replace('t100','@')  
               js =  js.replace('t43','#') 
               js =  js.replace('t42','"')  
               js =  js.replace('t41','!')  
-              js =  js.replace('t260','�') 
+              js =  js.replace('t260','ï¿½') 
               js =  js.replace('t47',"'")   
               js =  js.replace('t52','*')    
               js =  js.replace('t53','+')   
-              js =  js.replace('t264','�') 
-              js =  js.replace('t337','�') 
+              js =  js.replace('t264','ï¿½') 
+              js =  js.replace('t337','ï¿½') 
               js =  js.replace('t137','_')               
               js =  js.replace('t176','~')   
               js =  js.replace('t52','*')   
@@ -265,18 +209,18 @@ class OTVJSfuck(object):
               js =  js.replace('((11e20)[])[1]','.')
               return js                                                                     
                                
- def jsfuckescape(self,string):
-    string = string.replace(')[])', '').replace("(%(", "\\x").replace(')', '').replace('orhantv', '').replace('[][fill](return unescape(', '')
+ def jsfuckescape(self,Sicim):
+    Sicim = Sicim.replace(')[])', '').replace("(%(", "\\x").replace(')', '').replace('orhantv', '').replace('[][fill](return unescape(', '')
     i = 0
-    l = len(string)
+    l = len(Sicim)
     ret = ''
     while i < l:
-        c =string[i]
-        if string[i:(i+2)] == '\\x':
-            c = chr(int(string[(i+2):(i+4)],16))
+        c =Sicim[i]
+        if Sicim[i:(i+2)] == '\\x':
+            c = chr(int(Sicim[(i+2):(i+4)],16))
             i+=3
-        if string[i:(i+2)] == '\\t':
-            c = string[(i+2):(i+6)]
+        if Sicim[i:(i+2)] == '\\t':
+            c = Sicim[(i+2):(i+6)]
             c=c.replace('\\', '').replace('(', '').replace('x', '')#.replace('40', '')
             c = chr(int(c,8))                                     
             i+=5     
@@ -306,7 +250,7 @@ class OTVJSfuck(object):
             start_js = self.js
             for key, val in iteritems(self.LMAPPING):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
                 js = js.replace(val, key)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-                js = js.replace('[constructor]', '')
+                js = js.replace('[constructor]', '') 
             if start_js == self.js:
                 break                  
         return js               
@@ -327,29 +271,43 @@ class OTVJSfuck(object):
         js = js.replace('[+!+[]+', '[1').replace('(+!+[]+0+1)', '(101)')
         for key, val in iteritems(self.SIMPLE):                                                                                                                   
             js = js.replace(val, key)                                                                                                                                                                                                                                                  
+        
+        js = js.replace('[])0]', '[])[0]')
+        js = js.replace('[])0', '[])[0]')
+        js = js.replace('[])1', '[])[1]')                                                                                                                                                                                                                                                                                                                                                                  
+        js = js.replace('[])2', '[])[2]')
+        js = js.replace('[])3', '[])[3]')
         js = re.sub('\+(?!\+)', '', js)
-        js = js.replace('++', '+').replace('(![]01)', '(101)').replace('![]![]![]![]![]', '5').replace('![]![]![]![]', '4').replace('[![]1]', '[11]').replace('(![]![]![]', '(3').replace('(![]![]', '(2').replace('[![]![]![]', '[3').replace('[![]![]', '[2').replace('(![]', '(1').replace('[![]', '[1')#.replace('![]![]![]', '3').replace('![]![]', '2').replace('![]', '1')
+        js = js.replace('++', '+').replace('(![]01)', '(101)').replace('![]![]![]![]![]', '5').replace('![]![]![]![]', '4').replace('[![]1]', '[11]').replace('(![]![]![]', '(3').replace('(![]![]', '(2').replace('[![]![]![]', '[3').replace('[![]![]', '[2').replace('(![]', '(1').replace('[![]', '[1').replace('yanlis[]3', '(yanlis[])[3]').replace('(yanlis[]2', '(yanlis[])[2]').replace('(yanlis[]1', '(yanlis[])[1]').replace('(yanlis[]0', '(yanlis[])[0]')
         if not  '[0]' in js:
             js = js.replace('[])0]', '[])[0]')
             js = js.replace('[])0', '[])[0]')
-            js = js.replace('[])1', '[])[1]')
+            js = js.replace('[])1', '[])[1]')                                                                                                                                                                                                                                                                                                                                                                  
             js = js.replace('[])2', '[])[2]')
             js = js.replace('[])3', '[])[3]')
+            js = js.replace('[])0]', '[])[0]')
+            js = js.replace('[]0', '[])[0]')
+            js = js.replace('[]1', '[])[1]')
+            js = js.replace('[]2', '[])[2]')
+            js = js.replace('[]3', '[])[3]')
         js = self.repl_mapp(js)                                                                                                                                
-        if 'flat' in js:                                                                                               
-            js = js.replace('(true[][flat)[10]', '(true[][fill])[10]').replace('([][flat[])[3]', '([][fill][])[3]').replace('flat', 'fill')  
+        if 'flat' in js or 'filter' in js:                                                                                               
+            js = js.replace('filter', 'flat') 
+            js = js.replace('(dogru[][flat)[10]', '(dogru[][fill])[10]').replace('([][flat[])[3]', '([][fill][])[3]').replace('flat', 'fill')   
             js =self.repl_octal(js)                                                                                                                                    
             js = js.replace('(31)1', '(31)[1]')
-            js = js.replace('(false0)', '(false[0])')                         
+            js = js.replace('(yanlis0)', '(yanlis[0])')                         
             js = js.replace('[])0]', '[])[0]')
-            js = js.replace('[])0', '[])[0]')
+            js = js.replace('[])0', '[])[0]')                                                                                                                  
             js = js.replace('[])1', '[])[1]')
-            js = js.replace('[])2', '[])[2]')
-            js = js.replace('[][fill(return"(', '')     
+            js = js.replace('[])2', '[])[2]')                                                
+            js = js.replace('[][fill(return"(', '')    
+            js = js.replace('(yanlisSicim)[10]', 'S').replace('(yanlisNaNSicim)[20]', 'g[name]').replace('String', 'Sicim')    
             js =self.repl_octal(js) 
             js =self.repl_octal(js) 
+            js =  js.replace('((11e20)[])[1]','.').replace('(yanlis[yanlis])[italics]()[10]', '/').replace('[1]', '') .replace('[0]', '')  
             js =self.fuckend(js) 
-            return js 
+            return js                                                    
         js =self.repl_mapp(js)
         if '[][fill][constructor]' in js:
             js = self.uneval(js)
