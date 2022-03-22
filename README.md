@@ -1,6 +1,13 @@
 # OTVJSfuckdec.py jsfuck decoder Works in python 2 and 3
- 
-site : http://www.jsfuck.com/
+ new ..decode html
+https://www.sawlive.tv/embed/hunganit
+
+
+var _0x3703=['<iframe src="http://www.'+(![]+[])[!+[]+!+[]+!+[]]+(![]+[])[+!+[]]+(+(!+[]+!+[]+!+[]+[!+[]+!+[]]))[(!![]+[])[+[]]+(!![]+[][(![]+[])[+[]]+([![]]+[][[]])
+
+ decodet: var _0x3703=['<iframe src="http://www.'sawlive.tv'/embedm/'stre'/'edWUjcjOR'/'edWUjcjOR'" width="685" height="455" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" mozallowfullscreen="mozallowfullscreen" msallowfullscreen="msallowfullscreen" oallowfullscreen="oallowfullscreen" webkitallowfullscreen="webkitallowfullscreen"></iframe>',"\x77\x72\x69\x74\x65"];_0x3704 = [_0x3703.replace("/strea/", /stream/),_0x3703[0[]].replace("/stre/", /stream/)];hXTjRcQTV(document[_0x3703](_0x3704))
+--------
+ site : http://www.jsfuck.com/
 
 "HALLO ORHAN-HALLO WORLD"
 
@@ -18,3 +25,5 @@ jsfuck ="(+(+!+[]+[+[]]+[+!+[]]))[(!![]+[])[[+[]]]+(!![]+[][(![]+[])[[+[]]]+([![
 print (OTVJSfuck(jsfuck).decode())
 
 decodet: https://izle.canlitvlive.io/get.m3u8?pu=%2CZ99MQG%2C&sa=Ihasmx4B&ha=cfab5a74e31d17f04a9d0fb9cc0024a5&ti=1619989431&ci=5ffc9fe7d1fcbe251d64ab1d&fbclid=IwAR2MxoHfgoTxb0XPHGlcU8uaqDZmjbRKllWBZ20gd4pLzyUeVYXvDm3Vkqc
+
+                                                
